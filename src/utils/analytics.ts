@@ -18,8 +18,16 @@ function ensureInitialized(): void {
   window.gtag = function gtag(...args: unknown[]) {
     window.dataLayer?.push(args)
   }
+  // 명시적 동의 신호가 없으면 최신 gtag.js가 수집 자체를 보류할 수 있어
+  // 기본값을 직접 허용으로 지정한다 (로그인/쿠키 배너가 없는 서비스 특성상).
+  window.gtag('consent', 'default', {
+    ad_storage: 'granted',
+    analytics_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+  })
   window.gtag('js', new Date())
-  window.gtag('config', siteConfig.gaMeasurementId, { anonymize_ip: true })
+  window.gtag('config', siteConfig.gaMeasurementId)
 
   loadExternalScript(
     `https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaMeasurementId}`,
