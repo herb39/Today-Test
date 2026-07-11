@@ -180,7 +180,7 @@ export const conflictStyleTest: TestDefinition = {
       color: '#ef4444',
     },
   ],
-  relatedTestSlugs: ['burnout', 'focus'],
+  relatedTestSlugs: ['sleep-habit', 'game-style'],
   seo: {
     title: '다퉜을 때 나의 대처 유형 테스트 | 오늘의 테스트',
     description: '연인, 친구, 가족과 다퉜을 때 나는 어떤 타입일까? 즉시 해결 스피드형, 한 템포 쉬어가는형, 조용히 품는 마음형, 정면 돌파 대화형까지, 나의 갈등 대처 유형을 알아보는 심리 테스트예요.',

@@ -8,15 +8,19 @@ import type { TestDefinition } from '../types/test'
 
 const ALL_LABEL = '전체' as const
 type CategoryFilter = typeof ALL_LABEL | TestDefinition['category']
+const NEW_TESTS_PREVIEW_COUNT = 4
 
 export function HomePage() {
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>(ALL_LABEL)
+  const [showAllNew, setShowAllNew] = useState(false)
 
   useEffect(() => {
     trackEvent('view_home')
   }, [])
 
   const newTests = useMemo(() => publishedTests.filter((t) => t.isNew), [])
+  const visibleNewTests = showAllNew ? newTests : newTests.slice(0, NEW_TESTS_PREVIEW_COUNT)
+  const hiddenNewTestsCount = newTests.length - visibleNewTests.length
 
   const filteredTests = useMemo(
     () =>
@@ -41,10 +45,28 @@ export function HomePage() {
         <section>
           <h2 className="mb-3 text-lg font-bold text-stone-900">🆕 새로 나온 테스트</h2>
           <div className="flex flex-col gap-3">
-            {newTests.map((test) => (
+            {visibleNewTests.map((test) => (
               <TestCard key={test.slug} test={test} />
             ))}
           </div>
+          {hiddenNewTestsCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllNew(true)}
+              className="mt-3 w-full rounded-xl bg-stone-100 py-2.5 text-sm font-semibold text-stone-600 transition hover:bg-stone-200"
+            >
+              더보기 (+{hiddenNewTestsCount})
+            </button>
+          )}
+          {showAllNew && newTests.length > NEW_TESTS_PREVIEW_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAllNew(false)}
+              className="mt-3 w-full rounded-xl bg-stone-100 py-2.5 text-sm font-semibold text-stone-600 transition hover:bg-stone-200"
+            >
+              접기
+            </button>
+          )}
         </section>
       )}
 

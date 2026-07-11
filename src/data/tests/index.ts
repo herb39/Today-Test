@@ -13,6 +13,16 @@ import { insaTypeTest } from './insaType'
 import { relationshipDistanceTest } from './relationshipDistance'
 import { decisionStyleTest } from './decisionStyle'
 import { conflictStyleTest } from './conflictStyle'
+import { sleepHabitTest } from './sleepHabit'
+import { gameStyleTest } from './gameStyle'
+import { soloLivingTest } from './soloLiving'
+import { holidayGatheringTest } from './holidayGathering'
+import { petCareStyleTest } from './petCareStyle'
+import { seasonTypeTest } from './seasonType'
+import { leadershipStyleTest } from './leadershipStyle'
+import { fashionStyleTest } from './fashionStyle'
+import { hiddenCharmTest } from './hiddenCharm'
+import { goalStyleTest } from './goalStyle'
 
 /** 새 테스트를 추가하려면 이 배열에 항목을 추가하기만 하면 된다. */
 export const allTests: TestDefinition[] = [
@@ -30,6 +40,16 @@ export const allTests: TestDefinition[] = [
   relationshipDistanceTest,
   decisionStyleTest,
   conflictStyleTest,
+  sleepHabitTest,
+  gameStyleTest,
+  soloLivingTest,
+  holidayGatheringTest,
+  petCareStyleTest,
+  seasonTypeTest,
+  leadershipStyleTest,
+  fashionStyleTest,
+  hiddenCharmTest,
+  goalStyleTest,
 ]
 
 export const publishedTests: TestDefinition[] = allTests.filter((test) => test.isPublished)
