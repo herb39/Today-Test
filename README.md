@@ -88,22 +88,25 @@ npm run build
 
 ## Cloudflare Pages 배포
 
+이 프로젝트는 Cloudflare의 **Workers (정적 자산/Static Assets) 배포 방식**으로 연결되어 있습니다. Git 연결 시 대시보드가 "Pages" 대신 "Workers"로 프로젝트를 만들면 빌드가 `npx wrangler deploy`로 배포되며, 그 설정은 저장소 루트의 [`wrangler.jsonc`](wrangler.jsonc)를 따릅니다.
+
 ### 최초 연결 (사용자가 직접 해야 하는 작업)
 
 1. https://dash.cloudflare.com 에 로그인합니다.
-2. **Workers & Pages → Create → Pages → Connect to Git**을 선택하고, 이 프로젝트를 올려둔 개인 GitHub 저장소를 연결합니다. (GitHub 인증 및 저장소 생성은 사용자가 직접 진행해야 합니다.)
+2. **Workers & Pages → Create → 저장소 연결(Connect to Git)**을 선택하고, 이 프로젝트를 올려둔 개인 GitHub 저장소(`herb39/Today-Test`)를 연결합니다. (GitHub 인증 및 저장소 생성은 사용자가 직접 진행해야 합니다.)
 3. 빌드 설정을 다음과 같이 입력합니다.
    - **Production branch**: `main`
    - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-   - **Node version**: 환경변수 `NODE_VERSION`을 `22` 이상으로 설정 (또는 Cloudflare가 자동 감지하는 최신 LTS 사용)
+   - **Build output directory / Deploy command**: `wrangler.jsonc`의 `assets.directory`(`dist`)를 그대로 사용
+   - **Node version**: 22 이상 (Cloudflare가 자동 감지)
 4. **Environment variables**에 `.env.example`에 정의된 값 중 사용할 것만 등록합니다 (`VITE_` 접두사 그대로).
 5. 배포를 실행합니다.
 
 ### SPA 라우팅 / 정적 페이지 공존
 
-- `public/_redirects`에 `/* /index.html 200`이 설정되어 있어, 빌드 시 미리 생성되지 않은 경로로 직접 접근하거나 새로고침해도 React 앱이 정상적으로 라우팅을 이어받습니다.
-- 반면 `/`, `/tests/:slug`, `/tests/:slug/result/:resultId`, 정책 페이지 등은 `generate-static-pages.ts`가 실제 정적 `index.html` 파일을 만들어두므로, Cloudflare Pages는 이 경로들에 대해 `_redirects`보다 우선하여 실제 파일을 그대로 서빙합니다 (크롤러가 메타태그를 즉시 읽을 수 있음). 두 방식은 서로 충돌하지 않습니다.
+- `wrangler.jsonc`의 `assets.not_found_handling: "single-page-application"` 설정이 SPA 폴백을 담당합니다. 빌드 시 미리 생성되지 않은 경로로 직접 접근하거나 새로고침해도 `index.html`이 200으로 서빙되어 React 앱이 라우팅을 이어받습니다.
+- 반면 `/`, `/tests/:slug`, `/tests/:slug/result/:resultId`, 정책 페이지 등은 `generate-static-pages.ts`가 실제 정적 `index.html` 파일을 만들어두므로, 정확히 일치하는 경로는 이 파일이 그대로 서빙됩니다 (크롤러가 메타태그를 즉시 읽을 수 있음). 두 방식은 서로 충돌하지 않습니다.
+- (참고) 예전 클래식 "Pages" 프로젝트로 연결한 경우에는 `public/_redirects`에 `/* /index.html 200`을 두는 방식을 대신 사용합니다. 다만 이 저장소를 Workers 정적 자산 방식으로 배포할 때 `_redirects`와 `not_found_handling`을 동시에 두면 Cloudflare가 "무한 루프"로 판단해 배포에 실패하므로, 이 저장소에는 `_redirects` 파일을 두지 않습니다.
 
 ### 배포 후 확인 목록
 
