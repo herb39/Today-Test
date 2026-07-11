@@ -14,6 +14,9 @@ export const burnoutTest: TestDefinition = {
   isPublished: true,
   isNew: true,
   relatedTestSlugs: ['focus', 'ai-survival'],
+  // 순환 추천 구조: burnout → focus → ai-survival → love-style → animal-type → kakao-habit
+  // → work-dinner → spending-style → travel-style → sns-character → insa-type
+  // → relationship-distance → decision-style → conflict-style → burnout (반복)
   seo: {
     title: '직장인 번아웃 유형 테스트 - 내 에너지 상태 확인 | 오늘의 테스트',
     description:

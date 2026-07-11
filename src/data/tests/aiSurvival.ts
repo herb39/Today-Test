@@ -13,7 +13,7 @@ export const aiSurvivalTest: TestDefinition = {
   theme: { color: '#14b8a6', gradientFrom: '#5eead4', gradientTo: '#0d9488' },
   isPublished: true,
   isNew: true,
-  relatedTestSlugs: ['focus', 'burnout'],
+  relatedTestSlugs: ['love-style', 'animal-type'],
   seo: {
     title: 'AI 시대 나의 생존 유형 테스트 | 오늘의 테스트',
     description:

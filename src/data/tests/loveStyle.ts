@@ -13,7 +13,7 @@ export const loveStyleTest: TestDefinition = {
   theme: { color: '#ec4899', gradientFrom: '#f472b6', gradientTo: '#ec4899' },
   isPublished: true,
   isNew: true,
-  relatedTestSlugs: ['burnout', 'focus'],
+  relatedTestSlugs: ['animal-type', 'kakao-habit'],
   seo: {
     title: '연애할 때 나는 어떤 유형? - 나의 연애 스타일 테스트 | 오늘의 테스트',
     description: '표현 방식, 거리감, 갈등 대처까지. 11가지 질문으로 알아보는 나의 연애 유형 심리테스트.',

@@ -1,6 +1,6 @@
 import { useState, type RefObject } from 'react'
 import { isKakaoShareEnabled } from '../config/site'
-import { copyLink, canUseNativeShare, nativeShare } from '../utils/share'
+import { copyLink, canUseNativeShare, nativeShare, canShareFile, shareFile } from '../utils/share'
 import { shareToKakao } from '../utils/kakaoShare'
 import { trackEvent } from '../utils/analytics'
 import type { TestResult } from '../types/test'
@@ -46,12 +46,22 @@ export function ShareButtons({ testTitle, result, url, imageUrl, cardRef }: Shar
     if (!cardRef.current || saving) return
     setSaving(true)
     try {
-      const { toPng } = await import('html-to-image')
-      const dataUrl = await toPng(cardRef.current, { pixelRatio: 2 })
-      const link = document.createElement('a')
-      link.download = `${result.shortTitle}.png`
-      link.href = dataUrl
-      link.click()
+      const { toBlob } = await import('html-to-image')
+      const blob = await toBlob(cardRef.current, { pixelRatio: 2 })
+      if (!blob) return
+      const file = new File([blob], `${result.shortTitle}.png`, { type: 'image/png' })
+
+      // iOS Safari는 <a download>로 받은 파일을 '파일' 앱에 저장한다.
+      // 공유 시트(navigator.share)를 거치면 '이미지 저장'으로 사진 앱에 바로 저장할 수 있다.
+      const ok = canShareFile(file) ? await shareFile(file, result.shortTitle) : false
+      if (!ok) {
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.download = `${result.shortTitle}.png`
+        link.href = url
+        link.click()
+        URL.revokeObjectURL(url)
+      }
       trackEvent('save_result_image', { resultId: result.id })
     } catch {
       // 캡처 실패 시 조용히 무시한다 (브라우저 호환성 이슈 등)
@@ -84,7 +94,7 @@ export function ShareButtons({ testTitle, result, url, imageUrl, cardRef }: Shar
         <button
           type="button"
           onClick={handleKakaoShare}
-          className="rounded-xl bg-[#FEE500] py-3 text-sm font-semibold text-[#191600] transition hover:brightness-95"
+          className="rounded-xl bg-stone-100 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-200"
         >
           💬 카카오톡 공유
         </button>

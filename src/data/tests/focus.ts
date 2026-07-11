@@ -13,7 +13,7 @@ export const focusTest: TestDefinition = {
   theme: { color: '#3b82f6', gradientFrom: '#60a5fa', gradientTo: '#3b82f6' },
   isPublished: true,
   isNew: true,
-  relatedTestSlugs: ['burnout', 'ai-survival'],
+  relatedTestSlugs: ['ai-survival', 'love-style'],
   seo: {
     title: '나의 집중 스타일 테스트 | 오늘의 테스트',
     description:

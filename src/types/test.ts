@@ -64,7 +64,14 @@ export interface TestDefinition {
   isNew: boolean
 }
 
-export type TestCategory = '직장생활' | '집중력' | '연애' | 'AI/미래'
+export type TestCategory =
+  | '직장생활'
+  | '집중력'
+  | '연애'
+  | 'AI/미래'
+  | '성격'
+  | '관계'
+  | '라이프스타일'
 
 export interface TestAnswer {
   questionId: string
