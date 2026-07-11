@@ -97,6 +97,28 @@ function setTag(html: string, regex: RegExp, replacement: string): string {
   return html.match(regex) ? html.replace(regex, replacement) : html
 }
 
+const gaMeasurementId = process.env.VITE_GA_MEASUREMENT_ID || ''
+
+// GA4 공식 설치 가이드대로 모든 페이지의 <head>에 정적으로 심는다.
+// (React가 마운트된 뒤 JS로 뒤늦게 주입하면 최신 브라우저의 추적 방지 휴리스틱에
+// 의심스러운 스크립트로 분류되어 수집 자체가 조용히 무시될 수 있다.)
+const gaTag = gaMeasurementId
+  ? `
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'granted',
+        analytics_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+      });
+      gtag('js', new Date());
+      gtag('config', '${gaMeasurementId}');
+    </script>`
+  : ''
+
 function renderPage(template: string, page: PageMeta): string {
   const url = `${siteConfig.url}${page.path}`
   const imageUrl = `${siteConfig.url}${page.image ?? '/og/default.svg'}`
@@ -110,7 +132,7 @@ function renderPage(template: string, page: PageMeta): string {
     `<meta name="description" content="${page.description}" />`,
   )
 
-  const extraTags = `
+  const extraTags = `${gaTag}
     <link rel="canonical" href="${url}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="${siteConfig.name}" />
