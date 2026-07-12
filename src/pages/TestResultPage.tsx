@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { getTestBySlug } from '../data/tests'
 import { getResultById } from '../utils/scoring'
@@ -20,7 +20,6 @@ export function TestResultPage() {
   const location = useLocation()
   const test = getTestBySlug(slug)
   const result = test ? getResultById(test, resultId) : undefined
-  const cardRef = useRef<HTMLDivElement>(null)
   // 방금 완료한 세션에서만 넘어오는 원본 답변. 직접 URL로 들어오면 없다 —
   // 그 경우엔 어떤 답변으로 이 결과에 도달했는지 알 수 없어 비교 링크를 만들 수 없다.
   const sessionAnswers = (location.state as { answers?: TestAnswer[] } | null)?.answers
@@ -52,11 +51,11 @@ export function TestResultPage() {
 
   return (
     <div className="space-y-6">
-      <ResultCard ref={cardRef} testTitle={test.title} result={result} />
+      <ResultCard testTitle={test.title} result={result} />
 
       {sessionAnswers && <CompareCta test={test} result={result} answers={sessionAnswers} />}
 
-      <ShareButtons testTitle={test.title} result={result} url={resultUrl} cardRef={cardRef} />
+      <ShareButtons result={result} url={resultUrl} />
 
       <section className="space-y-4 rounded-2xl border border-stone-200 p-5">
         <p className="rounded-xl bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-700">

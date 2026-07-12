@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { TestAnswer, TestDefinition, TestResult } from '../types/test'
-import { getCompareService } from '../services/compareService'
+import { encodeAnswers } from '../utils/compareToken'
 import { shareOrCopyLink } from '../utils/share'
 import { getShareQuestion, getViralTitle } from '../utils/resultDisplay'
 import { trackEvent } from '../utils/analytics'
@@ -19,23 +19,28 @@ export function CompareCta({ test, result, answers }: CompareCtaProps) {
   const [loading, setLoading] = useState(false)
   const { message, showToast } = useToast()
 
-  async function handleClick() {
+  // iOS Safari는 navigator.share()가 클릭 이벤트와 "동기적으로" 이어져 있어야
+  // 동작한다 — 그 사이에 await가 하나라도 끼면 사용자 제스처가 만료돼 조용히
+  // 실패하고, shareOrCopyLink는 이를 링크 복사로 대체해버린다. 그래서 토큰
+  // 인코딩(원래 비동기 CompareService를 통해 하던 것)을 여기서는 동기 함수로
+  // 직접 호출해, handleClick 전체가 첫 await 없이 곧장 navigator.share를 부르게 한다.
+  function handleClick() {
     if (loading) return
+    const token = encodeAnswers(test, answers)
+    const url = `${siteConfig.url}/tests/${test.slug}/compare/${token}`
+    trackEvent('compare_click', { slug: test.slug, resultId: result.id })
+
     setLoading(true)
-    try {
-      const token = await getCompareService().createInviteToken(test, answers)
-      const url = `${siteConfig.url}/tests/${test.slug}/compare/${token}`
-      trackEvent('compare_click', { slug: test.slug, resultId: result.id })
-      const outcome = await shareOrCopyLink({
-        title: test.title,
-        text: `${getShareQuestion(result)} 나랑 궁합 비교해볼래?`,
-        url,
+    shareOrCopyLink({
+      title: test.title,
+      text: `${getShareQuestion(result)} 나랑 궁합 비교해볼래?`,
+      url,
+    })
+      .then((outcome) => {
+        if (outcome === 'copied') showToast('비교 링크가 복사되었습니다!')
+        else if (outcome === 'failed') showToast('링크 생성에 실패했습니다.')
       })
-      if (outcome === 'copied') showToast('비교 링크가 복사되었습니다!')
-      else if (outcome === 'failed') showToast('링크 생성에 실패했습니다.')
-    } finally {
-      setLoading(false)
-    }
+      .finally(() => setLoading(false))
   }
 
   return (

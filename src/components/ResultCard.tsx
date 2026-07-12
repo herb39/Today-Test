@@ -1,4 +1,3 @@
-import { forwardRef } from 'react'
 import type { TestResult } from '../types/test'
 import { siteConfig } from '../config/site'
 import { mixWithBlack } from '../utils/color'
@@ -9,16 +8,12 @@ interface ResultCardProps {
   result: TestResult
 }
 
-export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(function ResultCard(
-  { testTitle, result },
-  ref,
-) {
+export function ResultCard({ testTitle, result }: ResultCardProps) {
   const bgFrom = mixWithBlack(result.color, 0.2)
   const bgTo = mixWithBlack(result.color, 0.55)
 
   return (
     <div
-      ref={ref}
       className="flex flex-col items-center gap-4 rounded-3xl px-6 py-10 text-center"
       style={{
         background: `linear-gradient(160deg, ${bgFrom}, ${bgTo})`,
@@ -41,4 +36,4 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(function R
       </p>
     </div>
   )
-})
+}
