@@ -8,6 +8,7 @@ import { AdSlot } from '../components/AdSlot'
 import { useSeo } from '../utils/useSeo'
 import { trackEvent } from '../utils/analytics'
 import { getCompareService } from '../services/compareService'
+import { getStatsService } from '../services/statsService'
 
 export function TestQuestionPage() {
   const { slug = '' } = useParams()
@@ -56,6 +57,7 @@ function QuestionRunner({ slug }: { slug: string }) {
       if (isLastQuestion) {
         const { result, answers: finalAnswers } = runner.finish({ questionId: currentQuestion.id, choiceId })
         trackEvent('complete_test', { slug, resultId: result.id })
+        getStatsService().recordCompletion(slug, result.id)
 
         if (vsToken) {
           const myToken = await getCompareService().createInviteToken(test, finalAnswers)

@@ -1,9 +1,17 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "today-test",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-11",
   "assets": {
     "directory": "dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "STATS_KV",
+      "id": "d143a8b3fdd9498b9cca90c7602b37d3"
+    }
+  ]
 }
