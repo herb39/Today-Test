@@ -117,6 +117,12 @@ function setTag(html: string, regex: RegExp, replacement: string): string {
 }
 
 const gaMeasurementId = process.env.VITE_GA_MEASUREMENT_ID || ''
+const naverSiteVerification = process.env.VITE_NAVER_SITE_VERIFICATION || ''
+
+// 네이버 서치어드바이저의 "HTML 태그" 소유 확인 방식. 값이 없으면 태그 자체를 생략한다.
+const naverVerificationTag = naverSiteVerification
+  ? `\n    <meta name="naver-site-verification" content="${naverSiteVerification}" />`
+  : ''
 
 // GA4 공식 설치 가이드대로 모든 페이지의 <head>에 정적으로 심는다.
 // (React가 마운트된 뒤 JS로 뒤늦게 주입하면 최신 브라우저의 추적 방지 휴리스틱에
@@ -151,7 +157,7 @@ function renderPage(template: string, page: PageMeta): string {
     `<meta name="description" content="${page.description}" />`,
   )
 
-  const extraTags = `${gaTag}
+  const extraTags = `${gaTag}${naverVerificationTag}
     <link rel="canonical" href="${url}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="${siteConfig.name}" />
