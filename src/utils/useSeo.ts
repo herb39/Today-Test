@@ -33,7 +33,7 @@ export function useSeo({ title, description, path, image }: SeoOptions) {
   useEffect(() => {
     const fullTitle = `${title} | ${siteConfig.name}`
     const url = `${siteConfig.url}${path}`
-    const imageUrl = image ? `${siteConfig.url}${image}` : `${siteConfig.url}/og/default.svg`
+    const imageUrl = image ? `${siteConfig.url}${image}` : `${siteConfig.url}/og/default.png`
 
     document.title = fullTitle
     setMetaTag('name', 'description', description)

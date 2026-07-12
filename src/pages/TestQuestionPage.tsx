@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getTestBySlug } from '../data/tests'
 import { useTestRunner } from '../utils/useTestRunner'
 import { ProgressBar } from '../components/ProgressBar'
@@ -7,6 +7,7 @@ import { ChoiceButton } from '../components/ChoiceButton'
 import { AdSlot } from '../components/AdSlot'
 import { useSeo } from '../utils/useSeo'
 import { trackEvent } from '../utils/analytics'
+import { getCompareService } from '../services/compareService'
 
 export function TestQuestionPage() {
   const { slug = '' } = useParams()
@@ -28,6 +29,8 @@ export function TestQuestionPage() {
 function QuestionRunner({ slug }: { slug: string }) {
   const test = getTestBySlug(slug)!
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const vsToken = searchParams.get('vs')
   const runner = useTestRunner(test)
   const { currentQuestion, currentIndex, isLastQuestion, currentAnswer } = runner
   const adQuestionIndex = Math.floor(test.questions.length / 2)
@@ -49,11 +52,17 @@ function QuestionRunner({ slug }: { slug: string }) {
     runner.selectChoice(choiceId)
     trackEvent('answer_question', { slug, questionNumber: currentIndex + 1 })
 
-    window.setTimeout(() => {
+    window.setTimeout(async () => {
       if (isLastQuestion) {
-        const result = runner.finish()
+        const { result, answers: finalAnswers } = runner.finish({ questionId: currentQuestion.id, choiceId })
         trackEvent('complete_test', { slug, resultId: result.id })
-        navigate(`/tests/${slug}/result/${result.id}`)
+
+        if (vsToken) {
+          const myToken = await getCompareService().createInviteToken(test, finalAnswers)
+          navigate(`/tests/${slug}/compare/${vsToken}/${myToken}`)
+        } else {
+          navigate(`/tests/${slug}/result/${result.id}`, { state: { answers: finalAnswers } })
+        }
       } else {
         runner.goNext()
       }

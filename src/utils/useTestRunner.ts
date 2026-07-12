@@ -47,11 +47,22 @@ export function useTestRunner(test: TestDefinition) {
     setCurrentIndex((i) => Math.max(i - 1, 0))
   }, [])
 
-  const finish = useCallback(() => {
-    const result = resolveResult(test, answers)
-    clearProgress(test.slug)
-    return result
-  }, [test, answers])
+  // handleSelect는 마지막 문항을 고른 직후 짧은 지연(setTimeout) 뒤에 finish()를
+  // 부르는데, 그 콜백은 클릭 시점 렌더의 runner(= 이전 answers 상태)를 클로저로
+  // 들고 있어 방금 고른 마지막 선택이 answers 상태에 반영되기 전일 수 있다.
+  // latestAnswer로 마지막 선택을 명시적으로 넘겨 병합하면 이 타이밍 문제와 무관하게
+  // 항상 정확한 답변 전체로 결과를 계산할 수 있다.
+  const finish = useCallback(
+    (latestAnswer?: TestAnswer) => {
+      const finalAnswers = latestAnswer
+        ? [...answers.filter((a) => a.questionId !== latestAnswer.questionId), latestAnswer]
+        : answers
+      const result = resolveResult(test, finalAnswers)
+      clearProgress(test.slug)
+      return { result, answers: finalAnswers }
+    },
+    [test, answers],
+  )
 
   const currentAnswer = useMemo(
     () => answers.find((a) => a.questionId === currentQuestion?.id),
@@ -60,6 +71,7 @@ export function useTestRunner(test: TestDefinition) {
 
   return {
     restored,
+    answers,
     currentQuestion,
     currentIndex,
     isLastQuestion,

@@ -30,6 +30,18 @@ export interface TestResult {
   /** 결과 테마 색상 (Tailwind 클래스 조합에 사용할 hex) */
   color: string
   relatedResultIds?: string[]
+  /** 결과 카드 상단에 크게 표시할 바이럴 문구. 없으면 title로 대체된다. */
+  viralTitle?: string
+  /** "당신도 그런가요?" 류의 공유 유도 질문. 없으면 자동 생성된다. */
+  shareQuestion?: string
+  /** 친구가 이 결과를 보면 보일 법한 반응 한 줄. 없으면 표시하지 않는다. */
+  friendReaction?: string
+  /** 비교 결과의 궁합 한줄평에 가미할 짧은 태그. 없어도 궁합 계산 자체는 동작한다. */
+  compatibilityTags?: string[]
+  /** OG/스토리 이미지용 짧은 설명. 없으면 summary로 대체된다. */
+  shareDescription?: string
+  /** 공유 카드에 쓸 이모지. 없으면 emoji로 대체된다. */
+  shareEmoji?: string
 }
 
 export interface TestTheme {
@@ -38,9 +50,16 @@ export interface TestTheme {
   gradientTo: string
 }
 
+export interface TestFaqItem {
+  question: string
+  answer: string
+}
+
 export interface TestSeo {
   title: string
   description: string
+  /** 있으면 소개 페이지에 FAQ 섹션과 FAQPage JSON-LD를 함께 생성한다. */
+  faq?: TestFaqItem[]
 }
 
 export interface TestDefinition {

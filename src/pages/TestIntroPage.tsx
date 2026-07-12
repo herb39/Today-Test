@@ -4,6 +4,7 @@ import { getTestBySlug } from '../data/tests'
 import { RelatedTests } from '../components/RelatedTests'
 import { useSeo } from '../utils/useSeo'
 import { trackEvent } from '../utils/analytics'
+import { getRecommendedFor } from '../utils/testDisplay'
 
 export function TestIntroPage() {
   const { slug = '' } = useParams()
@@ -13,7 +14,7 @@ export function TestIntroPage() {
     title: test?.title ?? '테스트를 찾을 수 없어요',
     description: test?.seo.description ?? '',
     path: `/tests/${slug}`,
-    image: test ? `/og/${test.slug}.svg` : undefined,
+    image: test ? `/og/${test.slug}.png` : undefined,
   })
 
   useEffect(() => {
@@ -53,7 +54,50 @@ export function TestIntroPage() {
         테스트 시작하기
       </Link>
 
-      <RelatedTests slugs={test.relatedTestSlugs} />
+      <section>
+        <h2 className="mb-3 text-lg font-bold text-stone-900">이런 분께 추천해요</h2>
+        <ul className="space-y-1.5 text-sm text-stone-600">
+          {getRecommendedFor(test).map((item) => (
+            <li key={item} className="flex items-start gap-2">
+              <span aria-hidden="true">✓</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-bold text-stone-900">결과 미리보기</h2>
+        <div className="grid grid-cols-2 gap-2.5">
+          {test.results.map((result) => (
+            <div
+              key={result.id}
+              className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5"
+            >
+              <span className="text-xl" aria-hidden="true">
+                {result.emoji}
+              </span>
+              <span className="truncate text-sm font-medium text-stone-700">{result.shortTitle}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {test.seo.faq && test.seo.faq.length > 0 && (
+        <section>
+          <h2 className="mb-3 text-lg font-bold text-stone-900">자주 묻는 질문</h2>
+          <div className="space-y-3">
+            {test.seo.faq.map((item) => (
+              <div key={item.question} className="rounded-xl border border-stone-200 p-4">
+                <p className="text-sm font-semibold text-stone-900">Q. {item.question}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-stone-600">A. {item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <RelatedTests slugs={test.relatedTestSlugs} currentCategory={test.category} />
     </div>
   )
 }

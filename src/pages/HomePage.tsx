@@ -3,6 +3,7 @@ import { TestCard } from '../components/TestCard'
 import { AdSlot } from '../components/AdSlot'
 import { categories, publishedTests } from '../data/tests'
 import { trackEvent } from '../utils/analytics'
+import { getTodayTest } from '../utils/todayTest'
 import { useEffect } from 'react'
 import type { TestDefinition } from '../types/test'
 
@@ -18,6 +19,7 @@ export function HomePage() {
     trackEvent('view_home')
   }, [])
 
+  const todayTest = useMemo(() => getTodayTest(publishedTests), [])
   const newTests = useMemo(() => publishedTests.filter((t) => t.isNew), [])
   const visibleNewTests = showAllNew ? newTests : newTests.slice(0, NEW_TESTS_PREVIEW_COUNT)
   const hiddenNewTestsCount = newTests.length - visibleNewTests.length
@@ -40,6 +42,12 @@ export function HomePage() {
           가볍게 즐기는 콘텐츠로, 의학적·심리학적 진단이 아니에요.
         </p>
       </section>
+
+      {todayTest && (
+        <section>
+          <TestCard test={todayTest} featured />
+        </section>
+      )}
 
       {newTests.length > 0 && (
         <section>

@@ -22,7 +22,14 @@ export type AnalyticsEvent =
   | 'share_native'
   | 'share_kakao'
   | 'save_result_image'
+  | 'story_save'
   | 'click_related_test'
+  | 'compare_click'
+  | 'compare_invite_view'
+  | 'compare_complete'
+  | 'retry_test'
+  | 'home_click'
+  | 'today_test_click'
 
 /** 테스트 slug, 결과 ID, 문항 번호 등 최소 식별 정보만 전달한다. 사용자의 답변 원문은 절대 포함하지 않는다. */
 export function trackEvent(

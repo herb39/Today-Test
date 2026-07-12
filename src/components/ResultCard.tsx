@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import type { TestResult } from '../types/test'
 import { siteConfig } from '../config/site'
 import { mixWithBlack } from '../utils/color'
+import { getViralTitle } from '../utils/resultDisplay'
 
 interface ResultCardProps {
   testTitle: string
@@ -27,7 +28,7 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(function R
       <span className="text-7xl drop-shadow-sm" aria-hidden="true">
         {result.emoji}
       </span>
-      <h1 className="text-2xl font-extrabold text-white drop-shadow-sm">{result.title}</h1>
+      <h1 className="text-2xl font-extrabold text-white drop-shadow-sm">{getViralTitle(result)}</h1>
       <p className="text-sm leading-relaxed text-white/90">{result.summary}</p>
       <p className="mt-2 text-[11px] font-medium tracking-wide text-white/70">
         {siteConfig.name} · {siteConfig.url.replace(/^https?:\/\//, '')}

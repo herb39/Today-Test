@@ -1,26 +1,33 @@
 import { useEffect, useRef } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { getTestBySlug } from '../data/tests'
 import { getResultById } from '../utils/scoring'
+import { getShareQuestion } from '../utils/resultDisplay'
 import { ResultCard } from '../components/ResultCard'
+import { CompareCta } from '../components/CompareCta'
 import { ShareButtons } from '../components/ShareButtons'
 import { RelatedTests } from '../components/RelatedTests'
 import { AdSlot } from '../components/AdSlot'
 import { useSeo } from '../utils/useSeo'
 import { trackEvent } from '../utils/analytics'
 import { siteConfig } from '../config/site'
+import type { TestAnswer } from '../types/test'
 
 export function TestResultPage() {
   const { slug = '', resultId = '' } = useParams()
+  const location = useLocation()
   const test = getTestBySlug(slug)
   const result = test ? getResultById(test, resultId) : undefined
   const cardRef = useRef<HTMLDivElement>(null)
+  // 방금 완료한 세션에서만 넘어오는 원본 답변. 직접 URL로 들어오면 없다 —
+  // 그 경우엔 어떤 답변으로 이 결과에 도달했는지 알 수 없어 비교 링크를 만들 수 없다.
+  const sessionAnswers = (location.state as { answers?: TestAnswer[] } | null)?.answers
 
   useSeo({
     title: result ? `${result.title} - ${test!.title}` : '결과를 찾을 수 없어요',
     description: result?.summary ?? '',
     path: `/tests/${slug}/result/${resultId}`,
-    image: test ? `/og/${test.slug}.svg` : undefined,
+    image: test && result ? `/og/${test.slug}/${result.id}.png` : undefined,
   })
 
   useEffect(() => {
@@ -37,15 +44,26 @@ export function TestResultPage() {
     <div className="space-y-6">
       <ResultCard ref={cardRef} testTitle={test.title} result={result} />
 
+      {sessionAnswers && <CompareCta test={test} result={result} answers={sessionAnswers} />}
+
       <ShareButtons
         testTitle={test.title}
+        slug={test.slug}
         result={result}
         url={resultUrl}
         cardRef={cardRef}
-        imageUrl={`${siteConfig.url}/og/${test.slug}.svg`}
+        imageUrl={`${siteConfig.url}/og/${test.slug}/${result.id}.png`}
       />
 
       <section className="space-y-4 rounded-2xl border border-stone-200 p-5">
+        <p className="rounded-xl bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-700">
+          {getShareQuestion(result)}
+        </p>
+
+        {result.friendReaction && (
+          <p className="text-xs text-stone-500">👀 친구 반응 예상: {result.friendReaction}</p>
+        )}
+
         <p className="leading-relaxed text-stone-700">{result.description}</p>
 
         <div>
@@ -81,12 +99,14 @@ export function TestResultPage() {
       <div className="grid grid-cols-2 gap-3">
         <Link
           to={`/tests/${test.slug}`}
+          onClick={() => trackEvent('retry_test', { slug: test.slug })}
           className="rounded-xl border border-stone-300 py-3 text-center text-sm font-semibold text-stone-700"
         >
           🔄 다시 하기
         </Link>
         <Link
           to="/"
+          onClick={() => trackEvent('home_click', { slug: test.slug })}
           className="rounded-xl border border-stone-300 py-3 text-center text-sm font-semibold text-stone-700"
         >
           🏠 메인으로
@@ -95,7 +115,7 @@ export function TestResultPage() {
 
       <AdSlot slotId={import.meta.env.VITE_ADSENSE_SLOT_RELATED} />
 
-      <RelatedTests slugs={test.relatedTestSlugs} />
+      <RelatedTests slugs={test.relatedTestSlugs} currentCategory={test.category} />
     </div>
   )
 }
