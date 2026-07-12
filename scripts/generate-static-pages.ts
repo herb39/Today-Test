@@ -2,17 +2,14 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Resvg } from '@resvg/resvg-js'
-import QRCode from 'qrcode'
 import { allTests } from '../src/data/tests'
 import { getShareDescription, getShareEmoji, getViralTitle } from '../src/utils/resultDisplay'
-import { mixWithBlack } from '../src/utils/color'
 import type { TestDefinition, TestResult } from '../src/types/test'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const distDir = join(__dirname, '..', 'dist')
 const templatePath = join(distDir, 'index.html')
 const ogDir = join(distDir, 'og')
-const storyDir = join(distDir, 'story')
 
 // 이 스크립트는 Vite가 아닌 순수 Node(tsx)로 실행되므로 import.meta.env를 쓸 수 없다.
 // process.env에서 직접 읽는다 (package.json의 generate:static이 --env-file-if-exists=.env로 로드).
@@ -252,33 +249,7 @@ function buildResultOgSvg(test: TestDefinition, result: TestResult): string {
 `
 }
 
-/** 인스타그램 스토리(9:16)용 세로형 이미지. QR로 결과 링크를 바로 스캔할 수 있게 한다. */
-async function buildStorySvg(test: TestDefinition, result: TestResult, resultUrl: string): Promise<string> {
-  const qrDataUrl = await QRCode.toDataURL(resultUrl, { margin: 1, width: 260 })
-  const title = getViralTitle(result)
-  const titleFontSize = title.length > 12 ? 60 : 72
-  const emoji = getShareEmoji(result)
-  const bgFrom = mixWithBlack(result.color, 0.2)
-  const bgTo = mixWithBlack(result.color, 0.6)
-
-  return `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${bgFrom}" />
-      <stop offset="100%" stop-color="${bgTo}" />
-    </linearGradient>
-  </defs>
-  <rect width="1080" height="1920" fill="url(#bg)" />
-  <text x="540" y="200" font-size="40" font-weight="600" fill="#ffffffcc" text-anchor="middle" dominant-baseline="middle" font-family="${FONT_FAMILY}">${escapeXml(test.title)}</text>
-  <text x="540" y="800" font-size="280" text-anchor="middle" dominant-baseline="middle">${escapeXml(emoji)}</text>
-  <text x="540" y="990" font-size="${titleFontSize}" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" font-family="${FONT_FAMILY}">${escapeXml(title)}</text>
-  <image x="420" y="1520" width="240" height="240" href="${qrDataUrl}" />
-  <text x="540" y="1800" font-size="30" fill="#ffffffb3" text-anchor="middle" dominant-baseline="middle" font-family="${FONT_FAMILY}">${escapeXml(siteConfig.url.replace(/^https?:\/\//, ''))}</text>
-</svg>
-`
-}
-
-async function generateOgImages(): Promise<void> {
+function generateOgImages(): void {
   if (!existsSync(ogDir)) mkdirSync(ogDir, { recursive: true })
 
   for (const test of allTests) {
@@ -293,17 +264,11 @@ async function generateOgImages(): Promise<void> {
     writeFileSync(join(ogDir, `${test.slug}.png`), rasterizeToPng(svg))
 
     const resultOgDir = join(ogDir, test.slug)
-    const resultStoryDir = join(storyDir, test.slug)
     if (!existsSync(resultOgDir)) mkdirSync(resultOgDir, { recursive: true })
-    if (!existsSync(resultStoryDir)) mkdirSync(resultStoryDir, { recursive: true })
 
     for (const result of test.results) {
       const resultSvg = buildResultOgSvg(test, result)
       writeFileSync(join(resultOgDir, `${result.id}.png`), rasterizeToPng(resultSvg))
-
-      const resultUrl = `${siteConfig.url}/tests/${test.slug}/result/${result.id}`
-      const storySvg = await buildStorySvg(test, result, resultUrl)
-      writeFileSync(join(resultStoryDir, `${result.id}.png`), rasterizeToPng(storySvg))
     }
   }
 
@@ -333,7 +298,7 @@ async function main() {
   const template = readFileSync(templatePath, 'utf-8')
   const pages = buildPageList()
 
-  await generateOgImages()
+  generateOgImages()
 
   for (const page of pages) {
     const html = renderPage(template, page)

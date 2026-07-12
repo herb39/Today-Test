@@ -47,6 +47,11 @@ function QuestionRunner({ slug }: { slug: string }) {
     return () => window.removeEventListener('beforeunload', handler)
   }, [runner.answeredCount])
 
+  // URL은 안 바뀌지만 체감상 "다음 페이지"라, 문항이 바뀔 때마다 맨 위로 올린다.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentIndex])
+
   if (!runner.restored) return null
 
   function handleSelect(choiceId: string) {

@@ -24,13 +24,19 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(function R
         background: `linear-gradient(160deg, ${bgFrom}, ${bgTo})`,
       }}
     >
-      <p className="text-xs font-medium text-white/80">{testTitle}</p>
-      <span className="text-7xl drop-shadow-sm" aria-hidden="true">
+      <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>
+        {testTitle}
+      </p>
+      <span className="text-7xl" aria-hidden="true">
         {result.emoji}
       </span>
-      <h1 className="text-2xl font-extrabold text-white drop-shadow-sm">{getViralTitle(result)}</h1>
-      <p className="text-sm leading-relaxed text-white/90">{result.summary}</p>
-      <p className="mt-2 text-[11px] font-medium tracking-wide text-white/70">
+      <h1 className="text-2xl font-extrabold" style={{ color: '#ffffff' }}>
+        {getViralTitle(result)}
+      </h1>
+      <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.9)' }}>
+        {result.summary}
+      </p>
+      <p className="mt-2 text-[11px] font-medium tracking-wide" style={{ color: 'rgba(255,255,255,0.7)' }}>
         {siteConfig.name} · {siteConfig.url.replace(/^https?:\/\//, '')}
       </p>
     </div>

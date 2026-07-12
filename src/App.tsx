@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { RootLayout } from './layouts/RootLayout'
+import { ScrollToTop } from './components/ScrollToTop'
 // 홈은 가장 흔한 진입 경로라 정적으로 import한다 — lazy로 두면 index.html이 파싱된
 // 뒤에야 청크 요청이 시작되는 워터폴이 생겨 첫 화면 표시가 오히려 느려진다
 // (Lighthouse로 실측: LCP 5.8s/score 0.15). 정적 import면 Vite가 이 청크들을
@@ -31,6 +32,7 @@ function PageFallback() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route element={<RootLayout />}>

@@ -56,14 +56,7 @@ export function TestResultPage() {
 
       {sessionAnswers && <CompareCta test={test} result={result} answers={sessionAnswers} />}
 
-      <ShareButtons
-        testTitle={test.title}
-        slug={test.slug}
-        result={result}
-        url={resultUrl}
-        cardRef={cardRef}
-        imageUrl={`${siteConfig.url}/og/${test.slug}/${result.id}.png`}
-      />
+      <ShareButtons testTitle={test.title} result={result} url={resultUrl} cardRef={cardRef} />
 
       <section className="space-y-4 rounded-2xl border border-stone-200 p-5">
         <p className="rounded-xl bg-violet-50 px-4 py-3 text-sm font-semibold text-violet-700">

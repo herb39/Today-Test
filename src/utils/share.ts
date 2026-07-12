@@ -60,12 +60,15 @@ export function canShareFile(file: File): boolean {
   )
 }
 
-export async function shareFile(file: File, title: string): Promise<boolean> {
+export type ShareFileOutcome = 'shared' | 'cancelled' | 'failed'
+
+export async function shareFile(file: File, title: string): Promise<ShareFileOutcome> {
   try {
     await navigator.share({ files: [file], title })
-    return true
+    return 'shared'
   } catch (err) {
-    // 사용자가 공유 시트를 취소한 경우는 실패로 취급하지 않는다
-    return (err as Error)?.name === 'AbortError'
+    // 사용자가 공유 시트를 직접 닫은 경우는 실패가 아니라 취소다 — 구분해야
+    // 호출하는 쪽에서 "성공"으로 잘못 판단해 아무 안내 없이 넘어가지 않는다.
+    return (err as Error)?.name === 'AbortError' ? 'cancelled' : 'failed'
   }
 }
