@@ -21,7 +21,7 @@ function TestRow({ test }: { test: TestDefinition }) {
       </span>
       <div className="min-w-0">
         <p className="truncate font-semibold text-stone-900">{test.title}</p>
-        <p className="truncate text-xs text-stone-400">
+        <p className="truncate text-xs text-stone-500">
           질문 {test.questions.length}개 · 약 {test.estimatedMinutes}분
         </p>
       </div>

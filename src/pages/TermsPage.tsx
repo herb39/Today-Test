@@ -11,7 +11,7 @@ export function TermsPage() {
   return (
     <article className="space-y-5 text-sm leading-relaxed text-stone-700">
       <h1 className="text-xl font-bold text-stone-900">이용약관</h1>
-      <p className="text-xs text-stone-400">시행일: 2026년 7월 11일</p>
+      <p className="text-xs text-stone-500">시행일: 2026년 7월 11일</p>
 
       <section>
         <h2 className="mb-1.5 font-bold text-stone-900">1. 서비스의 성격</h2>

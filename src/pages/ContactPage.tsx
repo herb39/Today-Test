@@ -29,7 +29,7 @@ export function ContactPage() {
         </p>
       )}
 
-      <p className="text-xs text-stone-400">
+      <p className="text-xs text-stone-500">
         문의 내용에 개인정보(연락처, 답변 내용 등)를 포함하실 필요는 없습니다.
       </p>
     </article>

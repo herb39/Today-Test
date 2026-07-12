@@ -92,6 +92,7 @@ export function HomePage() {
 
       {todayTest && (
         <section>
+          <h2 className="sr-only">오늘의 테스트</h2>
           <TestCard test={todayTest} featured />
         </section>
       )}
@@ -100,11 +101,12 @@ export function HomePage() {
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-lg font-bold text-stone-900">🔥 인기 테스트</h2>
-            <div className="flex gap-1 rounded-full bg-stone-100 p-1">
+            <div role="group" aria-label="인기 테스트 기간 선택" className="flex gap-1 rounded-full bg-stone-100 p-1">
               {POPULAR_WINDOWS.map(({ key, label }) => (
                 <button
                   key={key}
                   type="button"
+                  aria-pressed={popularWindow === key}
                   onClick={() => setPopularWindow(key)}
                   className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                     popularWindow === key ? 'bg-stone-900 text-white' : 'text-stone-500'
@@ -119,7 +121,7 @@ export function HomePage() {
             <div className="flex flex-col gap-3">
               {popularTests.map((test, index) => (
                 <div key={test.slug} className="flex items-center gap-2">
-                  <span className="w-5 shrink-0 text-center text-sm font-bold text-stone-400">{index + 1}</span>
+                  <span className="w-5 shrink-0 text-center text-sm font-bold text-stone-500">{index + 1}</span>
                   <div className="min-w-0 flex-1">
                     <TestCard test={test} />
                   </div>
@@ -127,7 +129,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <p className="rounded-xl bg-stone-50 px-4 py-6 text-center text-sm text-stone-400">
+            <p className="rounded-xl bg-stone-50 px-4 py-6 text-center text-sm text-stone-500">
               아직 데이터가 충분하지 않아요. 조금만 기다려주세요!
             </p>
           )}
@@ -149,7 +151,7 @@ export function HomePage() {
                 </span>
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-stone-900">{result.title}</p>
-                  <p className="truncate text-xs text-stone-400">{test.title} · 다시 보기</p>
+                  <p className="truncate text-xs text-stone-500">{test.title} · 다시 보기</p>
                 </div>
               </Link>
             ))}
@@ -190,16 +192,12 @@ export function HomePage() {
 
       <section>
         <h2 className="mb-3 text-lg font-bold text-stone-900">모든 테스트</h2>
-        <div
-          role="tablist"
-          aria-label="카테고리 필터"
-          className="mb-4 flex gap-2 overflow-x-auto pb-1"
-        >
+        <div role="group" aria-label="카테고리 필터" className="mb-4 flex gap-2 overflow-x-auto pb-1">
           {[ALL_LABEL, ...categories].map((category) => (
             <button
               key={category}
-              role="tab"
-              aria-selected={activeCategory === category}
+              type="button"
+              aria-pressed={activeCategory === category}
               onClick={() => setActiveCategory(category)}
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
                 activeCategory === category

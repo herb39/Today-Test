@@ -36,7 +36,7 @@ export function TestIntroPage() {
         </span>
         <h1 className="mt-4 text-xl font-bold text-stone-900">{test.title}</h1>
         <p className="mt-3 text-sm leading-relaxed text-stone-600">{test.intro}</p>
-        <p className="mt-4 text-xs text-stone-400">
+        <p className="mt-4 text-xs text-stone-500">
           질문 {test.questions.length}개 · 약 {test.estimatedMinutes}분 소요
         </p>
       </div>

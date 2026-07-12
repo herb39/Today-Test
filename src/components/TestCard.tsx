@@ -27,7 +27,7 @@ export function TestCard({ test, featured = false }: TestCardProps) {
         </div>
         <h3 className="text-lg font-bold text-stone-900">{test.title}</h3>
         <p className="text-sm text-stone-500">{test.description}</p>
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-stone-500">
           질문 {test.questions.length}개 · 약 {test.estimatedMinutes}분
         </p>
       </Link>
@@ -50,13 +50,13 @@ export function TestCard({ test, featured = false }: TestCardProps) {
         <div className="flex items-center gap-1.5">
           <h3 className="truncate font-semibold text-stone-900">{test.title}</h3>
           {test.isNew && (
-            <span className="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-600">
+            <span className="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] font-bold text-rose-700">
               NEW
             </span>
           )}
         </div>
         <p className="mt-0.5 line-clamp-1 text-sm text-stone-500">{test.description}</p>
-        <p className="mt-1 text-xs text-stone-400">
+        <p className="mt-1 text-xs text-stone-500">
           질문 {test.questions.length}개 · 약 {test.estimatedMinutes}분
         </p>
       </div>

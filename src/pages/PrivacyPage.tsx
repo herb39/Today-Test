@@ -11,7 +11,7 @@ export function PrivacyPage() {
   return (
     <article className="space-y-5 text-sm leading-relaxed text-stone-700">
       <h1 className="text-xl font-bold text-stone-900">개인정보처리방침</h1>
-      <p className="text-xs text-stone-400">시행일: 2026년 7월 11일</p>
+      <p className="text-xs text-stone-500">시행일: 2026년 7월 11일</p>
 
       <p>
         {siteConfig.name}({siteConfig.nameEn}, 이하 &ldquo;서비스&rdquo;)는 이용자의 개인정보를

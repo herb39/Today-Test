@@ -98,7 +98,7 @@ function QuestionRunner({ slug }: { slug: string }) {
         <button
           type="button"
           onClick={runner.goPrevious}
-          className="w-full rounded-xl py-3 text-sm font-medium text-stone-400 transition hover:text-stone-600"
+          className="w-full rounded-xl py-3 text-sm font-medium text-stone-500 transition hover:text-stone-600"
         >
           이전 질문으로
         </button>

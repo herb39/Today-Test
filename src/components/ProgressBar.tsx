@@ -7,7 +7,7 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
   const percent = Math.round((current / total) * 100)
   return (
     <div>
-      <div className="flex items-center justify-between text-xs text-stone-400">
+      <div className="flex items-center justify-between text-xs text-stone-500">
         <span>
           {current} / {total}
         </span>
@@ -15,6 +15,7 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
       </div>
       <div
         role="progressbar"
+        aria-label="테스트 진행률"
         aria-valuenow={percent}
         aria-valuemin={0}
         aria-valuemax={100}
